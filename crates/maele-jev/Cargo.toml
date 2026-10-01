@@ -1,0 +1,27 @@
+[package]
+name = "maele-jev"
+description = "Maele's routing brain: one Jev (System One) call per voice turn, plus cheap fail-open layers"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+name = "maele_jev"
+path = "src/lib.rs"
+
+[[bin]]
+name = "maele"
+path = "src/main.rs"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+indexmap.workspace = true
+reqwest.workspace = true
+clap.workspace = true
+thiserror.workspace = true
+directories.workspace = true
+
+[dev-dependencies]

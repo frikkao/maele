@@ -1,0 +1,16 @@
+# Subtle English commands for routing tests.
+# One per line; lines starting with # are ignored.
+
+why is my docker container exiting with code 137
+the build keeps failing in github actions
+my pull request has a merge conflict
+look up the latest news on interest rates
+compare the iphone and pixel cameras
+write a short email to the customer about the delay
+summarise this in three bullet points
+make this more formal
+explain how a heat pump works
+what is the capital of Australia
+deploy is broken in prod again
+use opus for this one
+can you help me with something completely unrelated

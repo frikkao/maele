@@ -1,0 +1,226 @@
+# Maele — example config
+#
+# Copy to ~/.config/maele/config.yaml and edit:
+#   maele config init
+#
+# Secrets are NOT stored here. `key:` holds a *reference*:
+#   keychain:<service>   read from the macOS login keychain (recommended)
+#   env:<VAR>            read from the environment
+#
+# Store a key with:
+#   maele keys set typesafe
+
+routing:
+  # Layers run in order; the first one at or above the floor wins.
+  # "jev" is the brain (one System One call per turn); "rules" and "semantic"
+  # are the cheap fail-open path used when Jev is unavailable or abstains.
+  layers: [jev, rules, semantic]
+  confidence_floor: 0.35
+
+  jev:
+    base_url: https://api.typesafe.ai/v1
+    model: jev-latest
+    key: keychain:typesafe
+    timeout_ms: 1500
+
+fallback: general
+
+# Tone -> model tier. The keys are the Score levels asked of Jev, in order.
+tone:
+  quick:
+    model_tier: small
+  serious:
+    model_tier: large
+
+# ---------------------------------------------------------------------------
+# Targets — the things Maele can route *to*.
+# ---------------------------------------------------------------------------
+targets:
+  openrouter:
+    kind: openai_compat
+    base_url: https://openrouter.ai/api/v1
+    model: deepseek/deepseek-v4.1-flash
+    key: keychain:openrouter
+    max_tokens: 700
+
+  openai:
+    kind: openai_compat
+    base_url: https://api.openai.com/v1
+    model: gpt-4.1-mini
+    key: keychain:openai
+    max_tokens: 700
+
+  anthropic:
+    kind: anthropic
+    model: claude-sonnet-4-5
+    key: keychain:anthropic
+    max_tokens: 700
+
+  # Local, no key, no network. Requires `ollama serve`.
+  ollama:
+    kind: ollama
+    base_url: http://localhost:11434/v1
+    model: llama3.2:3b
+    max_tokens: 700
+
+  # Hermes' own OpenAI-compatible endpoint, if you expose one.
+  hermes:
+    kind: openai_compat
+    base_url: http://127.0.0.1:8642/v1
+    model: hermes
+    max_tokens: 700
+
+  # Anything with a CLI becomes a target.
+  shell_example:
+    kind: shell
+    command: ["echo", "replace me"]
+    enabled: false
+
+  # Route to another Mac app via a URL scheme (e.g. a shortcut).
+  shortcut_example:
+    kind: shortcut
+    url_scheme: "shortcuts://run-shortcut?name=Agent"
+    enabled: false
+
+# ---------------------------------------------------------------------------
+# Capabilities — what a question *needs*. The keys become the Choice criteria
+# sent to Jev; the descriptions tell Jev how to tell them apart.
+# ---------------------------------------------------------------------------
+capabilities:
+  general:
+    target: openrouter
+    description: everyday questions, explanations, small talk, translation
+    examples:
+      - "hva er hovedstaden i Australia"
+      - "what is the capital of Australia"
+      - "forklar hvordan en varmepumpe fungerer"
+
+  code:
+    target: anthropic
+    description: programming, repos, debugging, shell commands, infrastructure
+    examples:
+      - "why is my docker container exiting with code 137"
+      - "hvorfor feiler bygget i github actions"
+      - "skriv en sql-spørring som finner duplikater"
+      - "refactor this react component"
+
+  research:
+    target: openai
+    description: current events, comparisons, finding things out, opinions
+    examples:
+      - "hva er de siste nyhetene om renten"
+      - "sammenlign iphone og pixel kamera"
+      - "who won the election"
+      - "finn ut hvorfor aksjen falt i dag"
+
+  writing:
+    target: openai
+    description: drafting, rewriting, summarising, emails, tone
+    examples:
+      - "skriv en e-post til kunden om forsinkelsen"
+      - "oppsummer dette i tre punkter"
+      - "gjør dette mer formelt"
+
+  mine:
+    target: hermes
+    description: my own data, calendar, messages, home, my own agents and tools
+    examples:
+      - "hva har jeg på kalenderen i morgen"
+      - "hva sa kona i siste melding"
+      - "slå av lyset på kjøkkenet"
+      - "logg dette i idebanken"
+
+# ---------------------------------------------------------------------------
+# Rules — the cheapest layer, and the fail-open path when Jev is unavailable.
+#   when_any  at least one must appear
+#   when_all  every one must appear
+#   none_of   none may appear
+#   priority  tie-breaker only; it does not dominate the match
+#   languages restrict the rule to a detected language ("nb" / "en")
+# ---------------------------------------------------------------------------
+rules:
+  - capability: mine
+    priority: 100
+    when_any:
+      - "kalenderen min"
+      - "min kalender"
+      - "min logg"
+      - "meldingene mine"
+      - "lysene"
+      - "min app"
+      - "logg dette"
+      - "idebanken"
+      - "my calendar"
+      - "my messages"
+      - "my notes"
+      - "log this"
+
+  - capability: code
+    priority: 80
+    when_any:
+      - "pull request"
+      - "merge conflict"
+      - "kommando"
+      - "terminalen"
+      - "docker"
+      - "kubernetes"
+      - "stack trace"
+      - "segfault"
+      - "unit test"
+      - "git "
+      - "npm "
+      - "regex"
+      - " sql"
+      - "api-endepunkt"
+      - "compile"
+      - "refactor"
+      - "bug"
+      - "deploy"
+      - "github actions"
+
+  - capability: research
+    priority: 60
+    when_any:
+      - "siste nytt"
+      - "siste nyhetene"
+      - "sammenlign"
+      - "undersøk"
+      - "finn ut"
+      - "hva sier"
+      - "søk opp"
+      - "oppdatert informasjon"
+      - "latest news"
+      - "compare"
+      - "look up"
+      - "search for"
+
+  - capability: writing
+    priority: 60
+    when_any:
+      - "skriv en"
+      - "skriv et"
+      - "formuler"
+      - "oppsummer"
+      - "omformuler"
+      - "oversett"
+      - "e-post"
+      - "sammendrag"
+      - "write a"
+      - "draft a"
+      - "summarise"
+      - "summarize"
+      - "rewrite"
+
+# ---------------------------------------------------------------------------
+# Explicit overrides — "use opus", "bruk anthropic". These win over Jev.
+# Values may be a capability name or a target name.
+# ---------------------------------------------------------------------------
+overrides:
+  opus: anthropic
+  claude: anthropic
+  gpt: openai
+  openai: openai
+  strong: anthropic
+  lokalt: ollama
+  locally: ollama
+  hermes: hermes

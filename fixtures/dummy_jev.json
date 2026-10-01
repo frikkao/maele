@@ -1,0 +1,179 @@
+{
+  "_comment": "Fixture-backed Jev responses for offline routing. First matching rule wins; `default` is used otherwise. One `state` in, typed answers out.",
+  "responses": [
+    {
+      "_comment": "Abstain: confidence 0 so routing falls through to the cheap layers.",
+      "match": ["zzzz", "xyzzy", "qwerty"],
+      "response": {
+        "model": "dummy",
+        "answers": {
+          "capability": {
+            "type": "choice",
+            "choice": "",
+            "confidence": 0.0,
+            "probabilities": {}
+          }
+        }
+      }
+    },
+    {
+      "_comment": "Code — serious, frustrated, something is broken.",
+      "match": [
+        "docker",
+        "container",
+        "segfault",
+        "stack trace",
+        "kubernetes",
+        "pull request",
+        "github actions",
+        "bygget",
+        "refactor",
+        "deploy",
+        "deployment"
+      ],
+      "response": {
+        "model": "dummy",
+        "answers": {
+          "capability": {
+            "type": "choice",
+            "choice": "code",
+            "confidence": 0.86,
+            "probabilities": { "code": 0.86, "general": 0.09, "research": 0.05 }
+          },
+          "urgency": { "type": "noul", "noul": 0.74 },
+          "tone": {
+            "type": "score",
+            "score": 1.0,
+            "confidence": 0.81,
+            "legend": { "0": "quick", "1": "serious" },
+            "probabilities": { "0": 0.19, "1": 0.81 }
+          }
+        }
+      }
+    },
+    {
+      "_comment": "My own data — calendar, messages, home, my tools.",
+      "match": [
+        "kalender",
+        "kalenderen",
+        "melding",
+        "meldingene",
+        "lysene",
+        "idebanken",
+        "logg dette",
+        "min app",
+        "my calendar",
+        "my messages",
+        "my notes"
+      ],
+      "response": {
+        "model": "dummy",
+        "answers": {
+          "capability": {
+            "type": "choice",
+            "choice": "mine",
+            "confidence": 0.88,
+            "probabilities": { "mine": 0.88, "general": 0.12 }
+          },
+          "urgency": { "type": "noul", "noul": 0.1 },
+          "tone": {
+            "type": "score",
+            "score": 0.0,
+            "confidence": 0.9,
+            "legend": { "0": "quick", "1": "serious" },
+            "probabilities": { "0": 0.9, "1": 0.1 }
+          }
+        }
+      }
+    },
+    {
+      "_comment": "Research — current events, comparisons, lookups.",
+      "match": [
+        "nyheter",
+        "siste nytt",
+        "sammenlign",
+        "finn ut",
+        "compare",
+        "latest news",
+        "who won",
+        "aksjen",
+        "renten"
+      ],
+      "response": {
+        "model": "dummy",
+        "answers": {
+          "capability": {
+            "type": "choice",
+            "choice": "research",
+            "confidence": 0.79,
+            "probabilities": { "research": 0.79, "general": 0.2 }
+          },
+          "urgency": { "type": "noul", "noul": 0.2 },
+          "tone": {
+            "type": "score",
+            "score": 0.0,
+            "confidence": 0.85,
+            "legend": { "0": "quick", "1": "serious" },
+            "probabilities": { "0": 0.85, "1": 0.15 }
+          }
+        }
+      }
+    },
+    {
+      "_comment": "Writing — drafting, rewriting, summarising, tone.",
+      "match": [
+        "skriv",
+        "skriv en",
+        "oppsummer",
+        "formuler",
+        "omformuler",
+        "oversett",
+        "e-post",
+        "sammendrag",
+        "write a",
+        "draft",
+        "summarise",
+        "summarize",
+        "rewrite"
+      ],
+      "response": {
+        "model": "dummy",
+        "answers": {
+          "capability": {
+            "type": "choice",
+            "choice": "writing",
+            "confidence": 0.83,
+            "probabilities": { "writing": 0.83, "general": 0.17 }
+          },
+          "urgency": { "type": "noul", "noul": 0.15 },
+          "tone": {
+            "type": "score",
+            "score": 0.0,
+            "confidence": 0.88,
+            "legend": { "0": "quick", "1": "serious" },
+            "probabilities": { "0": 0.88, "1": 0.12 }
+          }
+        }
+      }
+    }
+  ],
+  "default": {
+    "model": "dummy",
+    "answers": {
+      "capability": {
+        "type": "choice",
+        "choice": "general",
+        "confidence": 0.9,
+        "probabilities": { "general": 0.9, "research": 0.06, "code": 0.04 }
+      },
+      "urgency": { "type": "noul", "noul": 0.1 },
+      "tone": {
+        "type": "score",
+        "score": 0.0,
+        "confidence": 0.8,
+        "legend": { "0": "quick", "1": "serious" },
+        "probabilities": { "0": 0.8, "1": 0.2 }
+      }
+    }
+  }
+}

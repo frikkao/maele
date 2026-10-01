@@ -70,9 +70,23 @@ resolves the pair.
 
 ## Status
 
-`prototype/jev/` is a working routing core (999 lines, 9 tests passing) — rules,
-semantic (character-trigram TF-IDF, no model download), optional LLM layer,
-language detection, macOS keychain for secrets, and a CLI:
+`crates/maele-jev/` is the Rust routing core (Phase 1). Jev — TypeSafe's
+System One model — is the brain: one call per voice turn with typed questions
+(`capability` Choice, `urgency` Noul, `tone` Score), returning typed answers
+with probabilities and confidence. Rules and character-trigram similarity stand
+behind it as the fail-open path when Jev is unavailable or abstains.
+
+```bash
+cargo test -p maele-jev          # 16 tests
+cargo run -p maele-jev -- --config config.example.yaml route --dummy "why is my docker container exiting"
+```
+
+`--dummy` routes against `fixtures/dummy_jev.json` with no network, so subtle
+NO/EN commands can be exercised offline. `route`, `explain`, `ask`, `doctor`,
+`keys`, and `config init` are implemented.
+
+`prototype/jev/` remains the original Python routing core and is the reference
+for the Rust port:
 
 ```bash
 cd prototype
@@ -81,8 +95,8 @@ uv run jev route "why is my docker container exiting"
 uv run jev doctor
 ```
 
-Not built: the Handy fork, the tone axis, the Tauri UI, target kinds `shell`
-and `shortcut`.
+Not built: the Handy fork / audio front end (Phase 2), the GPUI shell
+(Phase 3), target kinds `shell` and `shortcut`, and real harness handoff.
 
 ## Non-goals
 

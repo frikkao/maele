@@ -1,0 +1,20 @@
+# Subtle Norwegian commands for routing tests.
+# One per line; lines starting with # are ignored.
+# Run: cargo run -p maele-jev -- route --dummy "$(sed -n '5p' fixtures/questions.no.txt)"
+
+logg dette i idebanken
+hva har jeg på kalenderen i morgen
+hva sa kona i siste melding
+slå av lysene på kjøkkenet
+hvorfor feiler bygget i github actions
+docker containeren min dør hele tiden
+hva er de siste nyhetene om renten
+sammenlign iphone og pixel kamera
+skriv en e-post til kunden om forsinkelsen
+oppsummer dette i tre punkter
+gjør dette mer formelt
+forklar hvordan en varmepumpe fungerer
+hva er hovedstaden i Australia
+deploy feilet i prod, hvorfor skjer dette fortsatt
+bruk opus på denne
+kan du hjelpe meg med noe helt annet
