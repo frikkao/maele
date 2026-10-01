@@ -1,0 +1,48 @@
+[package]
+name = "maele-core"
+description = "Maele's audio/ASR front end, extracted from Handy's Rust core (MIT)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+name = "maele_core"
+path = "src/lib.rs"
+
+[[bin]]
+name = "maele-asr"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+cpal = "0.16.0"
+rtrb = "0.4.0"
+rubato = "0.16.2"
+hound = "3.5.1"
+log = "0.4"
+once_cell = "1"
+vad-rs = { git = "https://github.com/cjpais/vad-rs", default-features = false, optional = true }
+earshot = "1.2.2"
+rustfft = "6.4.0"
+strsim = "0.11.0"
+natural = "0.5.0"
+regex = "1"
+whatlang = "0.16"
+isolang = "2"
+clap.workspace = true
+reqwest.workspace = true
+directories.workspace = true
+global-hotkey = "0.8"
+transcribe-cpp = { version = "0.2.4", default-features = false }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+transcribe-cpp = { version = "0.2.4", default-features = false, features = ["metal"] }
+core-foundation = "0.10"
+
+[features]
+default = []
+# Silero VAD (via vad-rs -> ONNX Runtime). Heavier: pulls ONNX Runtime and, on
+# macOS, needs the CG/MLComputePlan link fixes. Earshot (pure Rust) is the
+# default detector.
+silero = ["dep:vad-rs"]

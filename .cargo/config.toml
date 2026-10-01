@@ -1,0 +1,6 @@
+[env]
+# ONNX Runtime (pulled in by vad-rs / transcribe-rs for Silero + Parakeet) is
+# built against this deployment target and uses MLComputePlan (macOS 14.0+).
+MACOSX_DEPLOYMENT_TARGET = "14.0"
+# cmake 4.x rejects the older policy floor used by transcribe.cpp's ggml build.
+CMAKE_POLICY_VERSION_MINIMUM = "3.5"

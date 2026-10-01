@@ -8,10 +8,24 @@ Third-party components and references
 
 Handy (https://github.com/cjpais/Handy)
     MIT License, Copyright (c) 2025 CJ Pais.
-    Maele's audio/ASR front end is planned as an extract of Handy's Rust core.
-    Any Handy source vendored into this repository will retain the copyright
-    notice above. The Handy name, logo, icon, and brand assets are not
-    open-source and are not used here.
+    `crates/maele-core/src/audio_toolkit/` is vendored from Handy's Rust core and
+    retains the copyright notice above (see also `crates/maele-core/LICENSE-HANDY`).
+    The Handy name, logo, icon, and brand assets are not open-source and are not
+    used here; Maele is unaffiliated.
+
+transcribe.cpp / transcribe-cpp (https://github.com/handy-computer/transcribe.cpp)
+    MIT License. Used as a library dependency (not vendored) for GGUF inference.
+
+NVIDIA Nemotron 3.5 ASR Streaming 0.6B
+    Model weights downloaded at runtime are governed by the OpenMDW-1.1 license.
+    Used as Maele's English engine.
+
+NB-Whisper (Nasjonalbiblioteket / National Library of Norway)
+    https://huggingface.co/NbAiLab/nb-whisper-large — Apache-2.0.
+    Model weights downloaded at runtime; used as Maele's Norwegian engine.
+
+OpenAI Whisper (ggml conversions by handy-computer)
+    MIT License. The small Whisper GGUF is used for language identification.
 
 TypeSafe Jev (https://docs.typesafe.ai)
     Maele calls the TypeSafe System One API ("Jev") for its routing decisions.

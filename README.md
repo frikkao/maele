@@ -95,8 +95,41 @@ uv run jev route "why is my docker container exiting"
 uv run jev doctor
 ```
 
-Not built: the Handy fork / audio front end (Phase 2), the GPUI shell
-(Phase 3), target kinds `shell` and `shortcut`, and real harness handoff.
+`crates/maele-core/` is the audio front end (Phase 2, started). `audio_toolkit`
+— cpal recorder, resampler, VAD, language ID, transcript cleanup — is vendored
+from Handy's Rust core (MIT; see `LICENSE-HANDY`), Tauri-free. Handy's 2.5k-line
+Tauri-coupled transcription manager is deliberately not vendored; Maele owns a
+lean ASR wrapper (`asr.rs`) over transcribe.cpp.
+
+The ASR layer is **two engines behind a language gate** (`asr.rs`, over
+transcribe.cpp GGUF): a small Whisper (`whisper-small`) detects the spoken
+language; Norwegian goes to **NB-Whisper** (National Library of Norway — best
+`no`), English goes to **Nemotron Streaming 3.5** (fast, excellent `en`). No
+single model covers both: Nemotron's Norwegian is unusable, and NB-Whisper's
+auto-detect biases English to Norwegian. Parakeet TDT v3 was ruled out — it does
+**not** support Norwegian.
+
+```bash
+cargo test -p maele-core                 # 92 tests
+cargo run -p maele-core -- devices
+cargo run -p maele-core -- fetch         # lid ~270 MB + en ~751 MB + no ~1.1 GB
+cargo run -p maele-core -- transcribe --seconds 5 --language auto
+cargo run -p maele-core -- push-to-talk  # hold ⌥Space to talk, release to transcribe
+```
+
+`--language auto` (default) relies on the gate; `--language no|en` forces an
+engine. NB-Whisper large is the quality option but ~1× realtime; swap in
+NB-Whisper medium for lower latency. `push-to-talk` needs Microphone and
+(usually) Accessibility/Input Monitoring permission for your terminal.
+
+**Toolchain notes:** the GGUF engine runs on transcribe.cpp (ggml + Metal), so it
+needs **cmake** but **no ONNX and no Xcode**. The optional Silero VAD backend
+(`--features silero`) does pull ONNX Runtime, which needs a **macOS 14+ SDK (full
+Xcode)**; it does not link on this machine's CommandLineTools 13.3, so the
+default VAD detector is Earshot (pure Rust). GPUI (Phase 3) will also want Xcode.
+
+Not built: hotkey wiring (rest of Phase 2), the GPUI shell (Phase 3), target
+kinds `shell` and `shortcut`, and real harness handoff.
 
 ## Non-goals
 
